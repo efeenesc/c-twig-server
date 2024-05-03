@@ -1,15 +1,18 @@
 #include "server.h"
+
 #include <psdk_inc/_socket_types.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+
+#include "utils/hashmap.h"
+
 #include "http.h"
 
+#define DEFAULT_BUFLEN 8192
 
-#define DEFAULT_BUFLEN 512
-
-int start(char port[]) {
+int start(char *port) {
   WSADATA wsaData;
 
   int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -52,18 +55,17 @@ int start(char port[]) {
     closesocket(ListenSocket);
     WSACleanup();
     return 1;
+  } else {
+    printf("Server started on port %s\n", port);
   }
 
   FreeAddrInfo(result);
-
-  printf("Started\n");
-
   listenForConnections(&ListenSocket);
-
   return 0;
 }
 
 int listenForConnections(SOCKET *socket) {
+
   int iResult = listen(*socket, SOMAXCONN);
   if (iResult == SOCKET_ERROR) {
     printf("Failed to start listening on socket! %d", WSAGetLastError());
@@ -100,7 +102,7 @@ void handleClientConnection(SOCKET *ClientSocket, UINT16 buflen) {
     if (iResult > 0) {
       // printf("Bytes received: %d\n", iResult);
       // printf("Received:\n%s\n", recvbuf);
-      parse_http(recvbuf);
+      int result = handle_http(recvbuf);
 
       iSendResult = send(*ClientSocket, recvbuf, iResult, 0);
       if (iSendResult == SOCKET_ERROR) {
@@ -108,10 +110,10 @@ void handleClientConnection(SOCKET *ClientSocket, UINT16 buflen) {
         closeSocket(ClientSocket);
         // return 1;
       }
-      printf("Bytes sent: %d\n", iSendResult);
-    } else if (iResult == 0)
+      // printf("Bytes sent: %d\n", iSendResult);
+    } else if (iResult == 0) {
       printf("Connection closing...\n");
-    else {
+    } else {
       printf("recv failed: %d\n", WSAGetLastError());
       closeSocket(ClientSocket);
       // return 1;
