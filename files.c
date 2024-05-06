@@ -14,6 +14,9 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 
+char g_CWD[1024] = {};
+char g_HTMLDIR[1024] = {};
+
 void get_current_directory(char *cwd) {
 #ifdef _WIN32
     GetCurrentDirectory(MAX_PATH, cwd);
@@ -23,23 +26,27 @@ void get_current_directory(char *cwd) {
 }
 
 char *get_full_path(char *relativePath) {
-  char cwd[1024];
-  get_current_directory(cwd);
-  strcat(cwd, relativePath);
+  if (g_CWD[0] == '\0') {
+    get_current_directory(g_CWD);
+    sprintf(g_HTMLDIR, "%s/html", g_CWD);
+  }
 
-  unsigned long long strLen = strlen(cwd) + 1;
+  char *concatPath = malloc(1024); // Allocate memory on the heap
 
-  char *result = malloc(sizeof(char) * strLen);
-  strcpy_s(result, strLen, cwd);
+  if (concatPath == NULL) {
+    return NULL;
+  }
 
-  return result;
+  strcpy(concatPath, g_HTMLDIR);
+  strcat(concatPath, relativePath);
+  return concatPath;
 }
 
 int check_dir(const char *fullFolderPath) {
-  DIR *dir = opendir(fullFolderPath);
+  DIR *dirptr = opendir(fullFolderPath);
 
-  if (dir) {
-    closedir(dir);
+  if (dirptr) {
+    closedir(dirptr);
     return 0;
   } else if (ENOENT == errno) {
     return 1;
@@ -50,6 +57,34 @@ int check_dir(const char *fullFolderPath) {
 }
 
 int check_file(const char *filePath) {
-  struct stat buffer;
-  return stat(filePath, &buffer) == 0 ? true : false;
+  if (access(filePath, F_OK) == 0) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+int read_file_bytes(const char *filePath, char **buffer, long *filelen) {
+  FILE *fileptr;
+
+  // Seek to EOF, get the current offset to get file's length in binary, rewind to pos0
+  fileptr = fopen(filePath, "rb");
+  fseek(fileptr, 0, SEEK_END);
+  *filelen = ftell(fileptr);
+  rewind(fileptr);
+
+  // Create large enough buffer, read the entire file into buffer, close file
+  if (*buffer == NULL) {
+    *buffer = malloc(*filelen * sizeof(char));
+  } else {
+    *buffer = realloc(*buffer, *filelen * sizeof(char));
+  }
+
+  if (*buffer == NULL) {
+    return 1;
+  }
+  
+  fread(*buffer, *filelen, 1, fileptr);
+  fclose(fileptr);
+  return 0;
 }

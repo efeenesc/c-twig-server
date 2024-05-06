@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <sec_api/string_s.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,7 +47,7 @@ char *sgets(char *s, int n, const char **strp) {
   return s;
 }
 
-unsigned short strsplit(const char **strp, char delim, char ***output) {
+unsigned short strsplit(const char *strp, char delim, char ***output) {
   char buff[512];
   unsigned short arrSize = 0;
   unsigned short strlen = 0;
@@ -57,8 +58,8 @@ unsigned short strsplit(const char **strp, char delim, char ***output) {
   delimiter is encountered, take what is in the buffer, malloc and copy it to a
   new string and add it to the output array.
   */
-  while (**strp != '\n' && **strp != '\0') {
-    if (**strp == delim) {
+  while (*strp != '\n' && *strp != '\0') {
+    if (*strp == delim) {
       char *splitStr = malloc(sizeof(char) * strlen + 1);
       strcpy_s(splitStr, strlen + 1, buff);
 
@@ -76,11 +77,11 @@ unsigned short strsplit(const char **strp, char delim, char ***output) {
       memset(buff, 0, strlen);
       arrSize++;
     } else {
-      buff[strlen] = **strp;
+      buff[strlen] = *strp;
       strlen++;
     }
 
-    ++(*strp);
+    ++(strp);
   }
 
   /*
@@ -196,4 +197,42 @@ int str_is_number(char *str) {
     }
   }
   return 1;
+}
+
+int str_replace(char *str, char *targetChar, char *newChar) {
+  char *writer = str;
+
+  while (*writer != '\0') {
+    if (*writer == *targetChar) {
+      *writer = *newChar;
+    }
+  }
+
+  return 0;
+}
+
+// Starts from end of string to find the target character. Every character encountered
+// until the target is found is written to a buffer. If found, the buffer is reversed and returned.
+//? This is useful in determining whether a file is requested and if it was, what its type is
+char *str_reverse_search(char *str, char targetChar) {
+  char buffer[1024];
+  int buffer_write = 0;
+  bool found = false;
+  int length = strlen(str);
+
+  for(int i = length - 1; i > 0; i--) {
+    if (str[i] == targetChar) {
+      found = true;
+      break;
+    }
+
+    buffer[buffer_write] = str[i];
+    buffer_write++;
+  }
+
+  if (found) {
+    return strrev(buffer);
+  } else {
+    return NULL;
+  }
 }

@@ -102,9 +102,12 @@ void handleClientConnection(SOCKET *ClientSocket, UINT16 buflen) {
     if (iResult > 0) {
       // printf("Bytes received: %d\n", iResult);
       // printf("Received:\n%s\n", recvbuf);
-      int result = handle_http(recvbuf);
+      void *response = NULL;
+      unsigned long long responseSize = 0;
+      int result = handle_http(recvbuf, &response, &responseSize);
 
-      iSendResult = send(*ClientSocket, recvbuf, iResult, 0);
+      // iSendResult = send(*ClientSocket, recvbuf, iResult, 0);
+      iSendResult = send(*ClientSocket, response, responseSize, 0);
       if (iSendResult == SOCKET_ERROR) {
         printf("send failed: %d\n", WSAGetLastError());
         closeSocket(ClientSocket);

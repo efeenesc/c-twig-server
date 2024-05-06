@@ -12,7 +12,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-#define DEFAULT_PORT "23579"
+#define DEFAULT_PORT "500"
 
 int main(int argc, char *argv[]) {
   char *port = DEFAULT_PORT;

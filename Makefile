@@ -3,7 +3,7 @@ CFLAGS=-std=c99 -g
 SRCFILES= main.c \
 json.c server.c http.c files.c \
 utils/hashmap.c utils/string_util.c utils/http_parse.c \
-types/key_value_pair.c types/http_enum.c types/json_types.c 
+types/key_value_pair.c types/http_types.c types/json_types.c 
 
 ifndef VERBOSE
 .SILENT:

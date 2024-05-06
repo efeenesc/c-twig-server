@@ -10,7 +10,7 @@
 
 #include "../json.h"
 
-#include "../types/http_enum.h"
+#include "../types/http_types.h"
 #include "../types/key_value_pair.h"
 
 #define HTTP_MIN_SIZE 10
