@@ -80,6 +80,7 @@ int listenForConnections(SOCKET *socket) {
     ClientSocket = accept(*socket, NULL, NULL);
     if (ClientSocket == INVALID_SOCKET) {
       printf("Invalid client socket\n");
+      break;
     } else {
       handleClientConnection(&ClientSocket, DEFAULT_BUFLEN);
     }

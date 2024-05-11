@@ -25,8 +25,7 @@ int handle_http(char buffer[], void **response, unsigned long long *responseSize
     return 1;
   }
 
-  // char *myContent = "Hello world!";
-
+  // Set a default error response
   HttpResponse res = {
     INTERNAL_SERVER_ERROR, TEXT_PLAIN, 0, 0
   };
@@ -38,6 +37,11 @@ int handle_http(char buffer[], void **response, unsigned long long *responseSize
   char *fullFolderPath = NULL;
   long fileSize = 0;
   fullFolderPath = get_full_path((char*)requestPath);
+
+  if (str_to_http_request_enum((char*)requestType) == HTTP_OPTIONS) {
+      handle_options(response, responseSize, http_headers, &res);
+      return 0;
+  }
 
   int pathMatchResult = match_path(requestType, requestPath);
 
@@ -112,6 +116,32 @@ int match_path(const char *requestType, const char *requestPath) {
   free(fullFolderPath);
   // free(folderPath);
   return 1;
+}
+
+int handle_options(void **response, unsigned long long *responseSize, struct hashmap *headers, HttpResponse *toWrite) {
+  char *statusText = http_response_code_to_str(toWrite->responseCode);
+  char buffer[1024];
+  memset(buffer, 0, sizeof(buffer));
+
+  snprintf(buffer, sizeof(buffer), 
+    "HTTP/1.1 %s\r\n"
+    "Allow: GET\r\n", 
+    statusText);
+
+  if (*response == NULL) {
+    unsigned long long resLen = strlen(buffer) + toWrite->contentLength;
+    *response = malloc(sizeof(char) * resLen);
+    if (*response == NULL) {
+      return -1;
+    }
+
+    memcpy(*response, buffer, strlen(buffer));
+    memcpy(*response + strlen(buffer), toWrite->content, toWrite->contentLength);
+
+    *responseSize = resLen;
+  }
+
+  return 0;
 }
 
 int write_response(void **response, unsigned long long *responseSize, struct hashmap *headers, HttpResponse *toWrite) {
