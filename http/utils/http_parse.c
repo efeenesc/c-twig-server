@@ -5,13 +5,13 @@
 #include <ctype.h>
 #include <sec_api/string_s.h>
 
-#include "hashmap.h"
-#include "string_util.h"
+#include "../../utils/hashmap.h"
+#include "../../utils/string_util.h"
 
-#include "../json.h"
+#include "../../json/json.h"
 
 #include "../types/http_types.h"
-#include "../types/key_value_pair.h"
+#include "../../types/key_value_pair.h"
 
 #define HTTP_MIN_SIZE 10
 

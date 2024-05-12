@@ -1,11 +1,10 @@
 #include "main.h"
-#include "server.h"
-
+#include "server/server.h"
+#include "files.h"
 #include "utils/string_util.h"
 
 #include <getopt.h>
 #include <pthread.h>
-#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -17,8 +16,8 @@
 int main(int argc, char *argv[]) {
   char *port = DEFAULT_PORT;
   bool isCaseInsensitive = false;
-  int opt;
   enum { CHARACTER_MODE, WORD_MODE, LINE_MODE } mode = CHARACTER_MODE;
+  int opt;
 
   while ((opt = getopt(argc, argv, "p:")) != -1) {
     switch (opt) {
@@ -31,6 +30,8 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
   }
+
+  set_exe_dir();
 
   pthread_t server_thread;
   void *start_server = &start;

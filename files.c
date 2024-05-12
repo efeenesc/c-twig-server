@@ -88,3 +88,10 @@ int read_file_bytes(const char *filePath, char **buffer, long *filelen) {
   fclose(fileptr);
   return 0;
 }
+
+void set_exe_dir() {
+  if (g_CWD[0] == '\0') {
+    get_current_directory(g_CWD);
+    sprintf(g_HTMLDIR, "%s/html", g_CWD);
+  }
+}

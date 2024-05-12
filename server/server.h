@@ -1,3 +1,4 @@
+#include "types/server_types.h"
 #include <winsock2.h>
 
 #ifndef server_h
@@ -7,6 +8,7 @@
 
 int start(char port[]);
 int listenForConnections(SOCKET *socket);
+void handleClientConnection(CUSTOMSOCKET *socket);
 void closeSocket(SOCKET *socket);
-void handleClientConnection(SOCKET *ClientSocket, UINT16 buflen);
+void closeCustomSocket(CUSTOMSOCKET *socket);
 int getTime();
