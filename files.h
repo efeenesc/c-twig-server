@@ -24,6 +24,6 @@ int read_file_bytes(const char *filePath, char **buffer, long *filelen);
 // This is meant to be executed only once in main(), to eliminate any
 // possibility of an incorrect working directory. Also sets the HTTP folder's
 // path in another global variable.
-void set_exe_dir();
+void set_cwd(char *newCWD);
 
 #endif

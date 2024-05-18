@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
   enum { CHARACTER_MODE, WORD_MODE, LINE_MODE } mode = CHARACTER_MODE;
   int opt;
 
+  printf("argv[0]: %s\n", argv[0]);
+
   while ((opt = getopt(argc, argv, "p:")) != -1) {
     switch (opt) {
     case 'p':
@@ -31,7 +33,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  set_exe_dir();
+  char *current_cwd = argv[0];
+  set_cwd(current_cwd);
 
   pthread_t server_thread;
   void *start_server = &start;

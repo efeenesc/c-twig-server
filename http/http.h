@@ -22,7 +22,7 @@ int handle_http(char buffer[], void **response,
 // TODO: Add endpoint matching here.
 int match_path(const char *requestType, const char *requestPath);
 
-// Handles OPTIONS HTTP requests by returning an appropriate HTTP response.
+// Handles OPTIONS HTTP requests by looking at available resources.
 // `response` is what the HTTP response is written to, `responseSize` is the
 // written response's length, `headers` is a hashmap of the parsed request
 // headers, and `toWrite` is an HttpResponse struct whose contents (code, type,

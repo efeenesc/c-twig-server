@@ -14,24 +14,21 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 
-char g_CWD[1024] = {};
-char g_HTMLDIR[1024] = {};
+#define FILE_PATH_LENGTH_LIMIT 2048
+
+char g_CWD[FILE_PATH_LENGTH_LIMIT] = {};
+char g_HTMLDIR[FILE_PATH_LENGTH_LIMIT] = {};
 
 void get_current_directory(char *cwd) {
 #ifdef _WIN32
-    GetCurrentDirectory(MAX_PATH, cwd);
+    GetCurrentDirectory(FILE_PATH_LENGTH_LIMIT, cwd);
 #elif __unix__
-    getcwd(cwd, 1024);
+    getcwd(cwd, FILE_PATH_LENGTH_LIMIT);
 #endif
 }
 
 char *get_full_path(char *relativePath) {
-  if (g_CWD[0] == '\0') {
-    get_current_directory(g_CWD);
-    sprintf(g_HTMLDIR, "%s/html", g_CWD);
-  }
-
-  char *concatPath = malloc(1024); // Allocate memory on the heap
+  char *concatPath = malloc(FILE_PATH_LENGTH_LIMIT); // Allocate memory on the heap
 
   if (concatPath == NULL) {
     return NULL;
@@ -89,9 +86,8 @@ int read_file_bytes(const char *filePath, char **buffer, long *filelen) {
   return 0;
 }
 
-void set_exe_dir() {
-  if (g_CWD[0] == '\0') {
-    get_current_directory(g_CWD);
-    sprintf(g_HTMLDIR, "%s/html", g_CWD);
-  }
+void set_cwd(char *newCWD) {
+  strcpy_s(g_CWD, strlen(newCWD), newCWD);
+  sprintf(g_HTMLDIR, "%s/html", newCWD);
+  printf("Uhh: %s\n", g_HTMLDIR);
 }

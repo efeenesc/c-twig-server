@@ -12,7 +12,7 @@ endif
 all: diyserver
 
 diyserver: main.c
-	$(CC) $(CFLAGS) $(SRCFILES) -o diyserver -lws2_32 -pthread -ggdb3
+	$(CC) $(CFLAGS) $(SRCFILES) -o twigserver -lws2_32 -pthread -ggdb3
 
 # clean:
 # 	del -f helloworld *.o ||:
