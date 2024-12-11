@@ -1,3 +1,9 @@
+<div align="center">
+<picture>
+    <img src="/assets/icon.png" width="25%">
+</picture>
+</div>
+
 # c-twig-server
 
 > A single twig breaks, but the bundle of twigs is strong.
@@ -6,7 +12,7 @@
 
 ## About
 
-This server is an extremely crash-prone and vulnerable HTTP server written in C (ISO99) with just about enough functionality to serve basic HTML content.
+This server is an extremely crash-prone and vulnerable HTTP server written in C (ISO99) with just about enough functionality barely to serve basic HTML content.
 
 Like its namesake, applying a tiny bit of force is enough to break it. It is cool to look at and play around with when found in the wild.
 
