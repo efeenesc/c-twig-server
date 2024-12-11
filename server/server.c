@@ -12,6 +12,7 @@
 
 #include "../http/http.h"
 #include "types/server_types.h"
+#include "../tls/tls.h"
 
 #define DEFAULT_BUFLEN 8192
 #define MAX_CONCURRENT_SOCKETS USHRT_MAX
@@ -131,8 +132,15 @@ void handleClientConnection(CUSTOMSOCKET *socket) {
   do {
     iResult = recv(socket->ClientSocket, recvbuf, recvbuflen, 0);
     if (iResult > 0) {
-      // printf("Bytes received: %d\n", iResult);
+      printf("Bytes received: %d\n", iResult);
       printf("Received:\n%s\n", recvbuf);
+      if (recvbuf[0] == 0x16) {
+        initiate_tls_call(recvbuf, iResult, socket->ClientSocket);
+        return;
+      } else {
+        printf("Not TLS attempt: %2x\n", recvbuf[0]);
+      }
+      
       void *response = NULL;
       unsigned long long responseSize = 0;
       int result = handle_http(recvbuf, &response, &responseSize);

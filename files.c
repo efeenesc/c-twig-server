@@ -89,5 +89,4 @@ int read_file_bytes(const char *filePath, char **buffer, long *filelen) {
 void set_cwd(char *newCWD) {
   strcpy_s(g_CWD, strlen(newCWD), newCWD);
   sprintf(g_HTMLDIR, "%s/html", newCWD);
-  printf("Uhh: %s\n", g_HTMLDIR);
 }

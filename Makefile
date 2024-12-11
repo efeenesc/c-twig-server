@@ -1,9 +1,14 @@
 CC=gcc
 CFLAGS=-std=c99 -g
 SRCFILES= main.c \
-json/json.c server/server.c http/http.c files.c \
-utils/hashmap.c utils/string_util.c http/utils/http_parse.c \
-types/key_value_pair.c http/types/http_types.c json/types/json_types.c 
+json/json.c json/types/json_types.c \
+server/server.c \
+http/http.c http/types/http_types.c http/utils/http_parse.c \
+files.c \
+utils/hashmap.c utils/string_util.c  \
+types/key_value_pair.c  \
+tls/tls.c tls/types/tls_types.c
+
 
 ifndef VERBOSE
 .SILENT:
